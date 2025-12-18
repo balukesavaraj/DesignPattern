@@ -1,4 +1,8 @@
 #include <iostream>
+#include "Circle.h"
+#include "Rectangle.h"
+#include "ShapeClient.h"
+#include "ShapeRegistry.h"
 
 // Key
 // Create new objects by copying an existing object.
@@ -29,5 +33,26 @@
 
 int main()
 {
+    // Consider that this happens somewhere, but client knows only original
+    std::unique_ptr<IShape> Original = std::make_unique<Circle>(10);
 
+    //Clone the object
+    std::unique_ptr<IShape> Copy = Original->Clone();
+    Copy->Draw();
+
+    // Another way with client class
+    ShapeClient client(new Circle(20));
+    std::unique_ptr<IShape> copyTheClient = client.CloneShape();
+    copyTheClient->Draw();
+
+    // Registry method of using prototyp
+    ShapeRegistry registry;
+    registry.RegisterPrototype("Big_Circle", std::make_unique<Circle>(25)); 
+    registry.RegisterPrototype("Rectangle", std::make_unique<Rectangle>(4,6));
+
+    auto protoCircle = registry.Create("Big_Circle");
+    auto protoRectanlge = registry.Create("Rectangle");
+    
+    protoCircle->Draw();
+    protoRectanlge->Draw(); 
 }
